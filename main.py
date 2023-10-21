@@ -1,6 +1,6 @@
 import xmlrpc.client
 from getpass import getpass
-from sagu.dataex import save_to_csv, generate_report
+from sagu.dataex import save_to_csv, generate_report, generate_ar93, save_to_csv_ar93
 from datetime import date
 
 # Enter Odoo server information
@@ -55,10 +55,13 @@ for ledger_row in general_ledger:
     if ledger_row['name'] == 'Down Payment':
         down_payment_references[ledger_row['partner_id'][-1]] = ledger_row['credit']
 
-print('\nGenerating monthly payment sums...')
-monthly_payment_sums = generate_report(payments, down_payment_references)
-save_to_csv(monthly_payments_csv_filename, monthly_payment_sums)
+#print('\nGenerating monthly payment sums...')
+#monthly_payment_sums = generate_report(payments, down_payment_references)
+#save_to_csv(monthly_payments_csv_filename, monthly_payment_sums)
+monthly_payment_sums = generate_ar93(payments, down_payment_references)
 
-print('\nGenerating monthly invoice sums...')
-monthly_invoice_sums = generate_report(invoices, down_payment_references, 'invoice_date', 'amount_total')
-save_to_csv(monthly_invoices_csv_filename, monthly_invoice_sums)
+#print('\nGenerating monthly invoice sums...')
+#monthly_invoice_sums = generate_report(invoices, down_payment_references, 'invoice_date', 'amount_total')
+
+monthly_invoice_sums = generate_ar93(invoices, down_payment_references, 'invoice_date', 'amount_total')
+save_to_csv_ar93(monthly_invoices_csv_filename, monthly_invoice_sums, monthly_payment_sums)
