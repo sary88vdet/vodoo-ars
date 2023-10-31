@@ -46,6 +46,7 @@ except xmlrpc.client.Fault as error:
     sys.exit(1)
 
 payments = models.execute_kw(db, uid, password, model, 'read', [payment_ids], {'fields': fields})
+#print(payments)
 
 model = 'account.move.line' #model name for General Ledger
 fields = ['id', 'move_id', 'name', 'debit', 'credit', 'balance',
@@ -63,6 +64,17 @@ fields = ['id', 'name', 'partner_id', 'invoice_date', 'invoice_date_due',
 # Search for invoices (you can add filters if needed)
 invoice_ids = models.execute_kw(db, uid, password, model, 'search', [[]])
 invoices = models.execute_kw(db, uid, password, model, 'read', [invoice_ids], {'fields': fields})
+#print(f'PRINTING INVOICE IDS: {invoice_ids}')
+
+model = 'res.partner'
+fields = ['id', 'street']
+
+customer_ids = models.execute_kw(db, uid, password, model, 'search', [[]])
+customers = models.execute_kw(db, uid, password, model, 'read', [customer_ids], {'fields': fields})
+
+address_map = {}
+for customer in customers:
+    address_map[customer['id']] = customer['street']
 
 # Extract data from general ledger
 for ledger_row in general_ledger:
@@ -86,7 +98,7 @@ print('\nGenerating monthly invoice sums...')
 monthly_invoice_sums = generate_report(invoices, down_payment_references, 'invoice_date', 'amount_total')
 
 if user_choice == 'A':
-    save_to_csv(monthly_payments_csv_filename, monthly_payment_sums)
+    save_to_csv(monthly_payments_csv_filename, monthly_payment_sums, models)
     #save_to_csv(monthly_invoices_csv_filename, monthly_invoice_sums)
 elif user_choice == 'B':
-    save_to_csv(re11_csv_filename, monthly_invoice_sums, monthly_payment_sums)
+    save_to_csv(re11_csv_filename, monthly_invoice_sums, monthly_payment_sums, address_map)

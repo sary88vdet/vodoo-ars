@@ -5,15 +5,15 @@ import csv
 from datetime import datetime
 import calendar
 
-def save_to_csv(base_filename, invoice_sums, payment_sums):
+def save_to_csv(base_filename, invoice_sums, payment_sums, address_map):
     # First extract key and value from invoice
     for year, customer in invoice_sums.items():
         # invoice_sums and payment_sums are a dictionary within a dictionary
-        print(f'Printing customer {customer}')
+        print(f'Printing customer {customer}!!!')
         first_iteration = True
         for value in customer.values():
             if first_iteration:
-                keys = list(reversed(list(value.keys())))
+                keys = list(reversed(list(value[-1].keys())))
                 first_iteration = False
             
         filename = f'{base_filename}_{year}.csv'
@@ -23,15 +23,17 @@ def save_to_csv(base_filename, invoice_sums, payment_sums):
             writer.writerow(['', ''] + ['Expected', 'Real'] * 12)
             for key, value in customer.items():
                 row = []
-                row.append(key.split(' ')[0]) #contract
-                row.append('') #placeholder for customer address
+                row.append(value[0]) #contract
+                print(key)
+
+                row.append(address_map[key]) #placeholder for customer address
                 for month in keys:
                     print(f'{month}/{year}')
-                    print(f'Invoice:: {customer[key][month]}')
-                    row.append(customer[key][month])
+                    print(f'Invoice:: {customer[key][-1][month]}')
+                    row.append(customer[key][-1][month])
                     try:
-                        print(f'Payments:: {payment_sums[year][key][month]}')
-                        row.append(payment_sums[year][key][month])
+                        print(f'Payments:: {payment_sums[year][key][-1][month]}')
+                        row.append(payment_sums[year][key][-1][month])
                     except KeyError:
                         print(f'Payments:: Key Error!')
                         row.append(0)
@@ -52,13 +54,16 @@ def generate_report(records, downpayment_filter=dict(), date_key='date', amount_
         year = record_date.year
         month = calendar.month_name[record_date.month] 
         amount = float(record[amount_key])
-        partner_id = record['partner_id'][-1]
+        #partner_id = record['partner_id'][-1]
+        id_number, contract_name = record['partner_id']
         
         if year not in year_sums:
             year_sums[year] = {}
         
-        if partner_id not in year_sums[year]:
-            year_sums[year][partner_id] = {
+        if id_number not in year_sums[year]:
+            year_sums[year][id_number] = [contract_name]
+            year_sums[year][id_number].append(
+             {
                 'January': 0,
                 'February': 0,
                 'March': 0,
@@ -72,13 +77,16 @@ def generate_report(records, downpayment_filter=dict(), date_key='date', amount_
                 'November': 0,
                 'December': 0,
             }
-        
-        if record['partner_id'] and partner_id in downpayment_filter.keys():
-            if downpayment_filter[partner_id] == amount:
-                print(f'Customer {partner_id} amount {amount} is a downpayment!')
+            )
+            print(year_sums[year][id_number])
+
+        if record['partner_id'] and contract_name in downpayment_filter.keys():
+            if downpayment_filter[contract_name] == amount:
+                print(f'Customer {contract_name} amount {amount} is a downpayment!')
                 continue
             else:
                 print(f'Adding record {record["name"]} with amount {amount} to report.')
-                year_sums[year][partner_id][month] += amount
-   
+                year_sums[year][id_number][-1][month] += amount
+    
+    print(f'YEAR SUMS: {year_sums}')
     return year_sums
