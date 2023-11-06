@@ -19,14 +19,15 @@ def save_to_csv(base_filename, invoice_sums, payment_sums, address_map):
         filename = f'{base_filename}_{year}.csv'
         with open(filename, 'w', newline='') as outfile:
             writer = csv.writer(outfile)
-            writer.writerow(['Contract', 'Address'] + [key + ' ' + str(year) for key in keys for _ in range(2)])
-            writer.writerow(['', ''] + ['Expected', 'Real'] * 12)
+            writer.writerow(['Contract', 'Address'] + [key + ' ' + str(year) for key in keys for _ in range(3)])
+            writer.writerow(['', ''] + ['Expected', 'Real', 'Old debt'] * 12)
             for key, value in customer.items():
                 row = []
                 row.append(value[0]) #contract
                 print(key)
 
-                row.append(address_map[key]) #placeholder for customer address
+                row.append(address_map[key]) 
+
                 for month in keys:
                     print(f'{month}/{year}')
                     print(f'Invoice:: {customer[key][-1][month]}')
@@ -37,7 +38,7 @@ def save_to_csv(base_filename, invoice_sums, payment_sums, address_map):
                     except KeyError:
                         print(f'Payments:: Key Error!')
                         row.append(0)
-                    
+                    row.append('') # Placeholder for old debt                    
                 print(row)
                 writer.writerow(row)
 

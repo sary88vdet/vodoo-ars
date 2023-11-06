@@ -12,7 +12,7 @@ db = input('Enter database: ')
 username = input('Username: ')
 password = getpass()
 # Prompt the user for a choice
-user_choice = input("Enter 'A' to generate AR92 or 'B' to generate RE11: ")
+user_choice = input("Enter 'A' to generate AR92 or 'B' to generate RE12: ")
 
 # Create a dictionary to store Down Payment references
 down_payment_references = {}
@@ -21,7 +21,7 @@ down_payment_references = {}
 date_today = date.today().strftime("%Y.%m.%d")
 monthly_payments_csv_filename = f'monthly_payments_{date_today}.csv'
 monthly_invoices_csv_filename = f'monthly_invoices_{date_today}.csv' 
-re11_csv_filename = f'vdet_re11_{date_today}'
+re12_csv_filename = f'vdet_re12_{date_today}'
 
 # Authenticate and obtain the user's session ID
 try:
@@ -86,8 +86,8 @@ if user_choice == 'A':
     print("Generating report for AR92")
     from sagu.ar92 import save_to_csv, generate_report
 elif user_choice == 'B':
-    print("Generating report for RE11")
-    from sagu.re11 import save_to_csv, generate_report
+    print("Generating report for RE12")
+    from sagu.re12 import save_to_csv, generate_report
 else:
     print("Invalid input. Please enter 'A' or 'B'.")
 
@@ -101,4 +101,4 @@ if user_choice == 'A':
     save_to_csv(monthly_payments_csv_filename, monthly_payment_sums, models)
     #save_to_csv(monthly_invoices_csv_filename, monthly_invoice_sums)
 elif user_choice == 'B':
-    save_to_csv(re11_csv_filename, monthly_invoice_sums, monthly_payment_sums, address_map)
+    save_to_csv(re12_csv_filename, monthly_invoice_sums, monthly_payment_sums, address_map)
