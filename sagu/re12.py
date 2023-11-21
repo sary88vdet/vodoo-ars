@@ -20,7 +20,7 @@ def save_to_csv(base_filename, invoice_sums, payment_sums, address_map):
         with open(filename, 'w', newline='') as outfile:
             writer = csv.writer(outfile)
             writer.writerow(['Contract', 'Address'] + [key + ' ' + str(year) for key in keys for _ in range(3)])
-            writer.writerow(['', ''] + ['Expected', 'Real', 'Old debt'] * 12)
+            writer.writerow(['', ''] + ['Expected', 'Real', 'Bal', 'Bal /w INV', 'Old debt', 'Cur Bal', 'Cur month', 'Pay Adv'] * 12)
             for key, value in customer.items():
                 row = []
                 row.append(value[0]) #contract
@@ -38,7 +38,12 @@ def save_to_csv(base_filename, invoice_sums, payment_sums, address_map):
                     except KeyError:
                         print(f'Payments:: Key Error!')
                         row.append(0)
-                    row.append('') # Placeholder for old debt                    
+                    row.append(2) # Placeholder for old debt                   
+                    row.append(2) # Placeholder for old debt  
+                    row.append(2) # Placeholder for old debt                   
+                    row.append(2) # Placeholder for old debt
+                    row.append(2) # Placeholder for old debt                   
+                    row.append(2) # Placeholder for old debt 
                 print(row)
                 writer.writerow(row)
 

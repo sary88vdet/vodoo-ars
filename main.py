@@ -11,6 +11,7 @@ url = input('Enter URL: ')
 db = input('Enter database: ')
 username = input('Username: ')
 password = getpass()
+
 # Prompt the user for a choice
 user_choice = input("Enter 'A' to generate AR92 or 'B' to generate RE12: ")
 
