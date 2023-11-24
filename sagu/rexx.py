@@ -2,24 +2,27 @@
 # By Sary 2023 - sary88vdet@gmail.com
 
 import csv
-from datetime import datetime
+from datetime import datetime, date
 import calendar
 
-def save_to_csv(base_filename, invoice_sums, payment_sums, address_map):
+def save_to_csv(invoice_sums, payment_sums, address_map):
+    date_today = date.today().strftime("%Y.%m.%d")
+    base_filename = input('Name to save CSV file: ') + f'_{date_today}'
+
     # First extract key and value from invoice
     for year, customer in invoice_sums.items():
         # invoice_sums and payment_sums are a dictionary within a dictionary
-        print(f'Printing customer {customer}!!!')
+        
         first_iteration = True
         for value in customer.values():
             if first_iteration:
-                keys = list(reversed(list(value[-1].keys())))
+                months = list(reversed(list(value[-1].keys())))
                 first_iteration = False
             
         filename = f'{base_filename}_{year}.csv'
         with open(filename, 'w', newline='') as outfile:
             writer = csv.writer(outfile)
-            writer.writerow(['Contract', 'Address'] + [key + ' ' + str(year) for key in keys for _ in range(3)])
+            writer.writerow(['Contract', 'Address'] + [month + ' ' + str(year) for month in months for _ in range(3)])
             writer.writerow(['', ''] + ['Expected', 'Real', 'Bal', 'Bal /w INV', 'Old debt', 'Cur Bal', 'Cur month', 'Pay Adv'] * 12)
             for key, value in customer.items():
                 row = []
@@ -28,7 +31,7 @@ def save_to_csv(base_filename, invoice_sums, payment_sums, address_map):
 
                 row.append(address_map[key]) 
 
-                for month in keys:
+                for month in months:
                     print(f'{month}/{year}')
                     print(f'Invoice:: {customer[key][-1][month]}')
                     row.append(customer[key][-1][month])
@@ -47,7 +50,7 @@ def save_to_csv(base_filename, invoice_sums, payment_sums, address_map):
                 print(row)
                 writer.writerow(row)
 
-def generate_report(records, downpayment_filter=dict(), date_key='date', amount_key='amount'):
+def generate_report(records, date_key='date', amount_key='amount'):
     year_sums = {}
 
     for record in records:
@@ -84,15 +87,9 @@ def generate_report(records, downpayment_filter=dict(), date_key='date', amount_
                 'December': 0,
             }
             )
-            print(year_sums[year][id_number])
+            #print(year_sums[year][id_number])
 
-        if record['partner_id'] and contract_name in downpayment_filter.keys():
-            if downpayment_filter[contract_name] == amount:
-                print(f'Customer {contract_name} amount {amount} is a downpayment!')
-                continue
-            else:
-                print(f'Adding record {record["name"]} with amount {amount} to report.')
-                year_sums[year][id_number][-1][month] += amount
+        print(f'Adding record {record["name"]} with amount {amount} to report.')
+        year_sums[year][id_number][-1][month] += amount
     
-    print(f'YEAR SUMS: {year_sums}')
     return year_sums
