@@ -42,6 +42,7 @@ def save_to_csv(customers):
 def year_sums(records, date_key='date', amount_key='amount'):
     # Reset values of month sums to 0
     year_sums = {}
+    sorted_year_sums = {}
     
     for record in records:
         try:
