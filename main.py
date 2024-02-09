@@ -8,19 +8,19 @@ db = input('Enter database: ')
 username = input('Username: ')
 password = getpass()
 
-odoo_version = input('Enter Odoo version: ')
-
-if int(odoo_version) == 13:
-    payment_fields = ['id', 'payment_date', 'amount', 'payment_method_id', 'name', 'move_name', 'partner_id', 'state']
-    payment_date = 'payment_date'
-else:
-    payment_fields = ['id', 'date', 'amount', 'payment_method_line_id', 'name', 'move_id', 'partner_id', 'state']
-    payment_date = 'date'
+payment_fields = ['id', 'date', 'amount', 'payment_method_line_id', 'name', 'move_id', 'partner_id', 'state']
+payment_date = 'date'
 
 # Authenticate and obtain the user's session ID
 try:
     common = xmlrpc.client.ServerProxy(f'{url}/xmlrpc/2/common', context=ssl._create_unverified_context())
     uid = common.authenticate(db, username, password, {})
+    odoo_version = common.version()
+
+    if int(odoo_version['server_version_info'][0]) == 13:
+        payment_fields = ['id', 'payment_date', 'amount', 'payment_method_id', 'name', 'move_name', 'partner_id', 'state']
+        payment_date = 'payment_date'
+
 except xmlrpc.client.Fault as error:
     print(f'FATAL: Database "{db}" does not exist')
     sys.exit(1)     
@@ -44,7 +44,7 @@ company = input('Enter company name: ')
 company_id = models.execute_kw(db, uid, password, 'res.company', 'search', [[('name', '=', company)]])
 domain = [['company_id', '=', company_id]] if company_id else None
 
-payments_all = get_objects('account.payment', ['id', 'payment_date', 'amount', 'payment_method_id', 'name', 'move_name', 'partner_id', 'state'], domain=domain)
+payments_all = get_objects('account.payment', payment_fields, domain=domain)
 
 # Search for customers with non-empty 'invoice_ids'
 customer_model = 'res.partner'
