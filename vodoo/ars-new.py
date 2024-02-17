@@ -77,14 +77,14 @@ def year_sums(records, date_key='date', amount_key='amount'):
 
     return sorted_year_sums
 
-def process_payment(debt_previous_month, invoice, payment, payment_in_adv):
+def process_payment(debt_previous_month, invoice, payment, payment_in_adv=0):
     # Initialize variables
     total_debt = 0
     debt_before_payment = 0
     current_month_debt = 0
     debt_after_payment = 0 
     current_month = 0
-    #payment_in_adv = payment_in_adv
+    #payment_in_adv = 0
 
     # If without debt
     if debt_previous_month == 0:
@@ -97,7 +97,7 @@ def process_payment(debt_previous_month, invoice, payment, payment_in_adv):
             current_month = payment + payment_in_adv
             payment_in_adv = 0
         else:
-            payment_in_adv = (payment + payment_in_adv) - invoice
+            payment_in_adv += (payment + payment_in_adv) - invoice
             current_month = invoice
             debt_after_payment = 0
 
@@ -119,7 +119,7 @@ def process_payment(debt_previous_month, invoice, payment, payment_in_adv):
                 payment_in_adv = 0
             elif invoice < current_month:
                 debt_after_payment = 0
-                payment_in_adv = current_month - invoice
+                payment_in_adv += current_month - invoice
 
     # Return relevant values
     return {

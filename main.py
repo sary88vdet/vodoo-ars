@@ -60,7 +60,7 @@ for customer in customers_with_invoices:
    
     payments = []
     for payment in payments_all:
-        if payment['partner_id'][0] == customer['id']:
+        if payment['partner_id'] and payment['partner_id'][0] == customer['id']:
             payments.append(payment)
 
     yearly_invoice_sums = year_sums(invoices_with_dates, 'invoice_date', 'amount_total')
