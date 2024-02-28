@@ -18,8 +18,8 @@ def save_to_csv(customers):
         filename = f'{base_filename}_{year}.csv'
         with open(filename, 'w', newline='') as outfile:
             writer = csv.writer(outfile)
-            writer.writerow(['Contract', 'Address'] + [month + ' ' + str(year) for month in months_reversed for _ in range(8)])
-            writer.writerow(['', ''] + ['Expected', 'Real', 'Total Debt', 'Debt Before Payment', 'Current Month Debt', 'Debt After Payment', 'Current Month', 'Payment in Advance'] * 12)
+            writer.writerow(['Contract', 'Address'] + [f'{i}: {month} {year}' for month in months_reversed for i in range(1, 9)])
+            writer.writerow(['', ''] + ['Expected Income', 'Real Income', 'Total Debt', 'Debt Before Payment', 'Current Month Debt', 'Debt After Payment', 'Current Month Income', 'Payment in Advance'] * 12)
             
             for customer in customers:
                 row = []
