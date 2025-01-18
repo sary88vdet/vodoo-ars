@@ -3,10 +3,10 @@ from getpass import getpass
 from datetime import date, datetime
 from vodoo.ars import year_sums, generate_report, save_to_csv
 
-url = input('Enter URL: ')
-db = input('Enter database: ')
-username = input('Username: ')
-password = getpass()
+url = input('Please input the URL: ')
+db = input('Enter the database name: ')
+username = input('Enter your username: ')
+password = getpass('Type your password (hidden): ')
 
 payment_fields = ['id', 'date', 'amount', 'payment_method_line_id', 'name', 'move_id', 'partner_id', 'state']
 payment_date = 'date'
@@ -40,7 +40,7 @@ def get_objects(model, fields, object_ids=None, domain=None):
     return models.execute_kw(db, uid, password, model, 'read', [object_ids], {'fields': fields})
 
 # Add an input for the company name or ID
-company = input('Enter company name: ')
+company = input('Type the company name or press enter:')
 company_id = models.execute_kw(db, uid, password, 'res.company', 'search', [[('name', '=', company)]])
 domain = [['company_id', '=', company_id]] if company_id else None
 
@@ -56,7 +56,7 @@ for customer in customers_with_invoices:
     invoice_ids = customer['invoice_ids']
     invoices = get_objects('account.move', ['name', 'invoice_date', 'amount_total'], invoice_ids)
     invoices_with_dates = [invoice for invoice in invoices if invoice['invoice_date']]
-    print(invoices_with_dates)
+    #print(invoices_with_dates)
    
     payments = []
     for payment in payments_all:

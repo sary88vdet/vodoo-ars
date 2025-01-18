@@ -3,7 +3,7 @@ from datetime import datetime, date
 
 def save_to_csv(customers):
     date_today = date.today().strftime("%Y.%m.%d")
-    base_filename = input('Name to save CSV file: ') + f'_{date_today}'
+    base_filename = input('Enter a name for the CSV file: ') + f'_{date_today}'
 
     months = list(calendar.month_name)[1:]
     years = set()
@@ -48,7 +48,7 @@ def year_sums(records, date_key='date', amount_key='amount'):
         try:
             record_date = datetime.strptime(record[date_key], '%Y-%m-%d')
         except TypeError:
-            print(f'Warning: record {record["name"]} has no date. Unable to add it to the report!')
+            #print(f'Warning: record {record["name"]} has no date. Unable to add it to the report!')
             continue
         
         year = record_date.year
