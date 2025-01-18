@@ -40,7 +40,8 @@ def get_objects(model, fields, object_ids=None, domain=None):
     return models.execute_kw(db, uid, password, model, 'read', [object_ids], {'fields': fields})
 
 # Add an input for the company name or ID
-company = input('Type the company name or press enter:')
+company = input('Type the company name or press enter: ')
+print('Fetching data. Please be patient...')
 company_id = models.execute_kw(db, uid, password, 'res.company', 'search', [[('name', '=', company)]])
 domain = [['company_id', '=', company_id]] if company_id else None
 
